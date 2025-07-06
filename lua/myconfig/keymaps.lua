@@ -23,3 +23,7 @@ keymap("n", "<leader>cp", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
   print("Copied path: " .. vim.fn.expand("%:p"))
 end, { desc = "Copy file path to clipboard" })
+
+keymap('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true })
+keymap('n', '<S-Tab>', ':bprev<CR>', { noremap = true, silent = true })
+
