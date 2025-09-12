@@ -1,1 +1,1 @@
-recently started using nvim at home. Tracking my config here.
+Tracking my nvim cfg.
