@@ -3,7 +3,6 @@ local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
 keymap("n", "<leader>w", ":w<CR>", opts)
 keymap("n", "<leader>q", ":q<CR>", opts)
-keymap("n", "<leader>e", ":e<space>", opts)
 keymap("n", "<leader>bd", ":bd<CR>", opts)
 
 keymap('n', '<C-n>', ':Neotree toggle<CR>', { noremap = true, silent = true })
@@ -26,4 +25,7 @@ end, { desc = "Copy file path to clipboard" })
 
 keymap('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true })
 keymap('n', '<S-Tab>', ':bprev<CR>', { noremap = true, silent = true })
+
+keymap('n', '<leader>s', ':split<CR>' )
+keymap('n', '<leader>v', ':vsplit<CR>' )
 
