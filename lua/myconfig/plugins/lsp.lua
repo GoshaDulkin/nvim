@@ -15,9 +15,7 @@ return {
         -- Default handler (runs for every server)
         function(server_name)
           local lspconfig = require("lspconfig")
-
           local capabilities = vim.lsp.protocol.make_client_capabilities()
-
           lspconfig[server_name].setup({
             capabilities = capabilities,
           })
@@ -26,9 +24,7 @@ return {
         -- ------------------- Go -------------------
         gopls = function()
           local lspconfig = require("lspconfig")
-
           local capabilities = vim.lsp.protocol.make_client_capabilities()
-
           lspconfig.gopls.setup({
             capabilities = capabilities,
             settings = {
@@ -47,9 +43,7 @@ return {
         -- ------------------- Python -------------------
         pyright = function()
           local lspconfig = require("lspconfig")
-
           local capabilities = vim.lsp.protocol.make_client_capabilities()
-
           lspconfig.pyright.setup({
             capabilities = capabilities,
           })
@@ -70,15 +64,18 @@ return {
         end,
       })
 
-      -- Python: format via Black
+      -- Python: format via Black safely
       vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "*.py",
         callback = function()
-          vim.cmd("silent! !black %")
-          vim.cmd("edit!")
+          local filepath = vim.fn.expand("%:p")
+          if filepath ~= "" and vim.fn.filereadable(filepath) == 1 then
+            -- Run Black on the file
+            vim.cmd("silent! !black " .. filepath)
+            -- No edit! needed, buffer stays safe
+          end
         end,
       })
     end,
   },
 }
-
