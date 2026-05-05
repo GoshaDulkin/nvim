@@ -44,8 +44,18 @@ return {
         pyright = function()
           local lspconfig = require("lspconfig")
           local capabilities = vim.lsp.protocol.make_client_capabilities()
+
           lspconfig.pyright.setup({
             capabilities = capabilities,
+            settings = {
+              python = {
+                analysis = {
+                  typeCheckingMode = "basic", -- or "strict" if you want more
+                  autoSearchPaths = true,
+                  useLibraryCodeForTypes = true,
+                },
+              },
+            },
           })
         end,
       },
@@ -56,6 +66,13 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
+      -- Enable inlay hints per buffer when LSP attaches
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+        end,
+      })
+
       -- Go: format via LSP
       vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "*.go",
@@ -65,17 +82,19 @@ return {
       })
 
       -- Python: format via Black safely
-      vim.api.nvim_create_autocmd("BufWritePre", {
+    vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "*.py",
         callback = function()
-          local filepath = vim.fn.expand("%:p")
-          if filepath ~= "" and vim.fn.filereadable(filepath) == 1 then
-            -- Run Black on the file
-            vim.cmd("silent! !black " .. filepath)
-            -- No edit! needed, buffer stays safe
-          end
+          -- Save cursor/view position
+          local view = vim.fn.winsaveview()
+
+          -- Format buffer using Black via stdin
+          vim.cmd("%!black -q -")
+
+          -- Restore cursor/view
+          vim.fn.winrestview(view)
         end,
-      })
+    })
     end,
   },
 }
